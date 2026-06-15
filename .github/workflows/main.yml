@@ -25,11 +25,14 @@
 
 name: Deploy to Hostinger
 
+# Manual-only for now: this does NOT run on push. It only runs when you click
+# "Run workflow" in the Actions tab. Re-enable automatic deploys later (once
+# FTP secrets exist) by uncommenting the `push` trigger below.
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
+  # push:
+  #   branches:
+  #     - main
 
 concurrency:
   group: deploy-hostinger
