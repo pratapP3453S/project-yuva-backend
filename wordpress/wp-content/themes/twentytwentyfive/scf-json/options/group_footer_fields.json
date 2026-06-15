@@ -1,0 +1,110 @@
+{
+    "key": "group_footer_fields",
+    "title": "Footer Fields",
+    "fields": [
+        {
+            "key": "field_footer_logo",
+            "label": "Logo",
+            "name": "logo",
+            "aria-label": "",
+            "type": "image",
+            "instructions": "Footer logo.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": { "width": "", "class": "", "id": "" },
+            "return_format": "array",
+            "preview_size": "medium",
+            "library": "all",
+            "mime_types": "svg,svgz,png,jpg,jpeg,webp"
+        },
+        {
+            "key": "field_footer_tagline",
+            "label": "Tagline",
+            "name": "tagline",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "Short blurb under the logo.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": { "width": "", "class": "", "id": "" },
+            "default_value": "",
+            "rows": 2,
+            "new_lines": "",
+            "allow_in_bindings": 1
+        },
+        {
+            "key": "field_footer_columns",
+            "label": "Link Columns",
+            "name": "columns",
+            "aria-label": "",
+            "type": "repeater",
+            "instructions": "Columns of links in the footer.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": { "width": "", "class": "", "id": "" },
+            "layout": "row",
+            "button_label": "Add column",
+            "sub_fields": [
+                { "key": "field_footer_col_heading", "label": "Column Heading", "name": "heading", "type": "text", "required": 0, "wrapper": { "width": "", "class": "", "id": "" }, "default_value": "", "allow_in_bindings": 1 },
+                {
+                    "key": "field_footer_col_links",
+                    "label": "Links",
+                    "name": "links",
+                    "type": "repeater",
+                    "required": 0,
+                    "wrapper": { "width": "", "class": "", "id": "" },
+                    "layout": "table",
+                    "button_label": "Add link",
+                    "sub_fields": [
+                        { "key": "field_footer_link_label", "label": "Label", "name": "label", "type": "text", "required": 0, "wrapper": { "width": "50", "class": "", "id": "" }, "default_value": "", "allow_in_bindings": 1 },
+                        { "key": "field_footer_link_href", "label": "Link (href)", "name": "href", "type": "text", "required": 0, "wrapper": { "width": "50", "class": "", "id": "" }, "default_value": "", "allow_in_bindings": 1 }
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "field_footer_socials",
+            "label": "Social Links",
+            "name": "socials",
+            "aria-label": "",
+            "type": "repeater",
+            "instructions": "Social media links.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": { "width": "", "class": "", "id": "" },
+            "layout": "table",
+            "button_label": "Add social",
+            "sub_fields": [
+                { "key": "field_footer_social_platform", "label": "Platform", "name": "platform", "type": "text", "instructions": "e.g. instagram, linkedin, x, facebook, youtube.", "required": 0, "wrapper": { "width": "50", "class": "", "id": "" }, "default_value": "", "allow_in_bindings": 1 },
+                { "key": "field_footer_social_href", "label": "Link (href)", "name": "href", "type": "text", "required": 0, "wrapper": { "width": "50", "class": "", "id": "" }, "default_value": "", "allow_in_bindings": 1 }
+            ]
+        },
+        {
+            "key": "field_footer_copyright",
+            "label": "Copyright Text",
+            "name": "copyright",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "e.g. \"© 2026 Yuva. All rights reserved.\".",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": { "width": "", "class": "", "id": "" },
+            "default_value": "",
+            "allow_in_bindings": 1
+        }
+    ],
+    "location": [
+        [
+            { "param": "options_page", "operator": "==", "value": "footer-settings" }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "Site-wide footer content, served to the Next.js frontend via GET /wp-json/yuva/v1/footer.",
+    "show_in_rest": 1
+}

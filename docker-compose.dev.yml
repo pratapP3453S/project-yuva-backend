@@ -1,0 +1,57 @@
+# =============================================================================
+#  DEV override — local development on a developer's machine.
+#
+#  Run with:  ./rundocker.sh dev      (or rundocker.cmd dev on Windows)
+#
+#  Differences from stg/prod:
+#    - WP_DEBUG on, file editing allowed, debug log written
+#    - WordPress on http://localhost:8080
+#    - phpMyAdmin on http://localhost:8081 for easy DB inspection
+#    - its own isolated mysql_dev_data volume
+# =============================================================================
+
+services:
+  wordpress:
+    container_name: wordpress-dev
+
+    ports:
+      - "8080:80"
+
+    environment:
+      # Override the safe-by-default config from the base file for local work.
+      WORDPRESS_CONFIG_EXTRA: |
+        define( 'WP_DEBUG', true );
+        define( 'WP_DEBUG_LOG', true );
+        define( 'WP_DEBUG_DISPLAY', false );
+        define( 'SCRIPT_DEBUG', true );
+        define( 'DISALLOW_FILE_EDIT', false );
+
+  mysql:
+    container_name: mysql-dev
+
+    ports:
+      # Exposed locally so devs can connect with a GUI client if they want.
+      - "3307:3306"
+
+    volumes:
+      - mysql_dev_data:/var/lib/mysql
+
+  # Convenience-only service for local DB browsing. Dev-only — never in stg/prod.
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: phpmyadmin-dev
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      UPLOAD_LIMIT: 512M
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - wordpress-network
+
+volumes:
+  mysql_dev_data:

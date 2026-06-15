@@ -1,0 +1,26 @@
+# =============================================================================
+#  PRODUCTION override — live environment on the server.
+#
+#  Run with:  ./rundocker.sh prod
+#
+#  Hardened: restart always, no debug (inherited from base), isolated prod
+#  database volume. Keep this file minimal — only true prod differences.
+# =============================================================================
+
+services:
+  wordpress:
+    container_name: wordpress-prod
+    restart: always
+
+    ports:
+      - "8085:80"
+
+  mysql:
+    container_name: mysql-prod
+    restart: always
+
+    volumes:
+      - mysql_prod_data:/var/lib/mysql
+
+volumes:
+  mysql_prod_data:

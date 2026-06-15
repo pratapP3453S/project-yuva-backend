@@ -1,0 +1,85 @@
+# =============================================================================
+#  Base Docker Compose stack (shared by dev / stg / prod)
+#
+#  This file defines the common shape of the stack. It is NEVER run alone —
+#  always combine it with exactly one environment override:
+#
+#     docker compose -f docker-compose.yml -f docker-compose.dev.yml  up -d
+#     docker compose -f docker-compose.yml -f docker-compose.stg.yml  up -d
+#     docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+#
+#  (or just use ./rundocker.sh dev|stg|prod )
+#
+#  Variables come from the .env file in this directory (see .env.example).
+# =============================================================================
+
+services:
+  wordpress:
+    image: wordpress:php8.3-apache
+    restart: unless-stopped
+
+    # Load DB credentials etc. from .env explicitly (in addition to Compose's
+    # implicit substitution) so the values are present INSIDE the container too.
+    env_file:
+      - .env
+
+    environment:
+      WORDPRESS_DB_HOST: mysql:3306
+      WORDPRESS_DB_USER: ${MYSQL_USER}
+      WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
+      WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
+      # Extra wp-config constants. WP_DEBUG is forced off here and re-enabled
+      # only in the dev override, so staging/prod are safe by default.
+      WORDPRESS_CONFIG_EXTRA: |
+        define( 'WP_DEBUG', false );
+        define( 'DISALLOW_FILE_EDIT', true );
+
+    volumes:
+      # Only OUR content is bind-mounted from the repo. WordPress core lives
+      # inside the image / server, never in the repo.
+      - ./wordpress/wp-content:/var/www/html/wp-content
+      - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini:ro
+
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost/wp-admin/install.php"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+    networks:
+      - wordpress-network
+
+  mysql:
+    image: mysql:8
+    restart: unless-stopped
+
+    env_file:
+      - .env
+
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+
+    # Named volume is declared per-environment (dev/stg/prod) so each env keeps
+    # its own isolated database. See the override files.
+
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+    networks:
+      - wordpress-network
+
+networks:
+  wordpress-network:
+    driver: bridge

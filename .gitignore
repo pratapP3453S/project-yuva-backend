@@ -1,0 +1,93 @@
+# =============================================================================
+#  .gitignore — Yuva WordPress backend (Docker, headless)
+#
+#  Philosophy: this repo tracks ONLY what we author —
+#    - the active theme  (themes/twentytwentyfive, incl. its scf-json/ schema)
+#    - our must-use plugins (mu-plugins/)
+#  WordPress core, third-party plugins, uploads, caches, DB data and secrets
+#  are NOT tracked — they live on the server / in Docker volumes and are
+#  installed/managed there. CI deploys only the two tracked folders above.
+#
+#  Rule of thumb: if WordPress, a plugin, or an upload created it, it does not
+#  belong in git. If a developer on this team wrote it, it does.
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Secrets & environment
+# -----------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+
+# -----------------------------------------------------------------------------
+# Docker volumes, database dumps, throwaway test stack data
+# -----------------------------------------------------------------------------
+mysql_data/
+db_backups/
+backups/
+*.sql
+*.sql.gz
+
+# -----------------------------------------------------------------------------
+# WordPress core (lives in the wordpress image / on the server — never ours).
+# Ignored defensively in case a full WP install is ever copied in.
+# -----------------------------------------------------------------------------
+/wordpress/wp-admin/
+/wordpress/wp-includes/
+/wordpress/wp-*.php
+/wordpress/index.php
+/wordpress/xmlrpc.php
+/wordpress/license.txt
+/wordpress/readme.html
+wp-config.php
+
+# -----------------------------------------------------------------------------
+# wp-content: deny-all, then allow back exactly what we author.
+# This is what prevents third-party files sneaking into git and prevents the
+# "my push deleted your plugin" class of conflicts.
+# -----------------------------------------------------------------------------
+/wordpress/wp-content/*
+!/wordpress/wp-content/themes/
+!/wordpress/wp-content/mu-plugins/
+
+# --- themes: track ONLY the active theme; ignore other stock themes ----------
+/wordpress/wp-content/themes/*
+!/wordpress/wp-content/themes/twentytwentyfive/
+# (if we switch to a child theme later, add: !/wordpress/wp-content/themes/<child>/)
+
+# --- mu-plugins: fully ours — track everything here (allow-listed above) ------
+
+# -----------------------------------------------------------------------------
+# WordPress-generated content (uploads, caches, upgrades, migration archives).
+# These are under wp-content but were already excluded by the deny-all above;
+# listed explicitly as documentation of what must never be committed.
+# -----------------------------------------------------------------------------
+# /wordpress/wp-content/plugins/        (all third-party plugins — server-managed)
+# /wordpress/wp-content/uploads/        (media library)
+# /wordpress/wp-content/cache/          (page/object cache)
+*.wpress
+
+# -----------------------------------------------------------------------------
+# Build artifacts & dependencies (if we add a theme build step later)
+# -----------------------------------------------------------------------------
+node_modules/
+vendor/
+dist/
+build/
+
+# -----------------------------------------------------------------------------
+# Logs
+# -----------------------------------------------------------------------------
+*.log
+logs/
+
+# -----------------------------------------------------------------------------
+# OS & editor cruft
+# -----------------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+*~

@@ -1,0 +1,81 @@
+# =============================================================================
+#  Deploy to Hostinger (FTP)
+#
+#  Sync model: REPO IS THE SOURCE OF TRUTH.
+#  Each job mirrors ONE folder we own to the server. `dangerous-clean-slate`
+#  makes the server folder EXACTLY match the repo — files deleted in git are
+#  deleted on the server, so there are no ghost/orphan files and one teammate's
+#  push can't leave stale copies of another's deleted work.
+#
+#  SAFETY: we only mirror folders WE author —
+#    - the active theme  (themes/twentytwentyfive, incl. its scf-json/ schema)
+#    - our must-use plugins (mu-plugins)
+#  We NEVER mirror wp-content as a whole, so server-side uploads, third-party
+#  plugins, and WordPress core are never touched. Hostinger / cPanel WordPress
+#  management tools keep working.
+#
+#  NOTE on the theme: we intentionally track + deploy twentytwentyfive (the
+#  Awarathon-style setup), and disable WordPress auto-theme-updates on the
+#  server so a core update never overwrites our scf-json/. If you later move to
+#  a child theme, change the theme paths below to themes/<child>/.
+#
+#  Required repo secrets (Settings > Secrets and variables > Actions):
+#    FTP_HOST, FTP_USER, FTP_PASS
+# =============================================================================
+
+name: Deploy to Hostinger
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-hostinger
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to production
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v4
+
+      # --- Active theme (carries the SCF schema in scf-json/) -----------------
+      - name: Deploy theme (twentytwentyfive + scf-json)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASS }}
+          protocol: ftps
+          port: 21
+          local-dir: ./wordpress/wp-content/themes/twentytwentyfive/
+          server-dir: /public_html/wp-content/themes/twentytwentyfive/
+          dangerous-clean-slate: true          # mirror: make server match repo exactly
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/.gitkeep
+
+      # --- Our must-use plugins ----------------------------------------------
+      - name: Deploy mu-plugins
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASS }}
+          protocol: ftps
+          port: 21
+          local-dir: ./wordpress/wp-content/mu-plugins/
+          server-dir: /public_html/wp-content/mu-plugins/
+          dangerous-clean-slate: true          # mirror: make server match repo exactly
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**

@@ -1,0 +1,26 @@
+# =============================================================================
+#  STAGING override — pre-production environment on the server.
+#
+#  Run with:  ./rundocker.sh stg
+#
+#  Mirrors prod as closely as possible (no debug, restart always) but on its
+#  own port and its own isolated database volume.
+# =============================================================================
+
+services:
+  wordpress:
+    container_name: wordpress-stg
+    restart: always
+
+    ports:
+      - "8087:80"
+
+  mysql:
+    container_name: mysql-stg
+    restart: always
+
+    volumes:
+      - mysql_stg_data:/var/lib/mysql
+
+volumes:
+  mysql_stg_data:

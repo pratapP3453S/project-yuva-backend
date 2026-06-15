@@ -1,0 +1,68 @@
+{
+    "key": "group_navbar_fields",
+    "title": "Navbar Fields",
+    "fields": [
+        {
+            "key": "field_navbar_logo",
+            "label": "Logo",
+            "name": "logo",
+            "aria-label": "",
+            "type": "image",
+            "instructions": "Navbar brand logo (top-left).",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": { "width": "", "class": "", "id": "" },
+            "return_format": "array",
+            "preview_size": "medium",
+            "library": "all",
+            "mime_types": "svg,svgz,png,jpg,jpeg,webp"
+        },
+        {
+            "key": "field_navbar_menu_items",
+            "label": "Menu Items",
+            "name": "menu_items",
+            "aria-label": "",
+            "type": "repeater",
+            "instructions": "Top-level navigation links, left to right.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": { "width": "", "class": "", "id": "" },
+            "layout": "table",
+            "button_label": "Add menu item",
+            "sub_fields": [
+                { "key": "field_navbar_item_label", "label": "Label", "name": "label", "type": "text", "instructions": "Link text, e.g. \"About\".", "required": 0, "wrapper": { "width": "50", "class": "", "id": "" }, "default_value": "", "allow_in_bindings": 1 },
+                { "key": "field_navbar_item_href", "label": "Link (href)", "name": "href", "type": "text", "instructions": "Path or URL, e.g. \"/about\" or \"https://...\".", "required": 0, "wrapper": { "width": "50", "class": "", "id": "" }, "default_value": "", "allow_in_bindings": 1 }
+            ]
+        },
+        {
+            "key": "field_navbar_cta",
+            "label": "CTA Button",
+            "name": "cta",
+            "aria-label": "",
+            "type": "group",
+            "instructions": "The right-hand call-to-action button (e.g. \"Donate\").",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": { "width": "", "class": "", "id": "" },
+            "layout": "block",
+            "sub_fields": [
+                { "key": "field_navbar_cta_text", "label": "Text", "name": "cta_text", "type": "text", "instructions": "Button label, e.g. \"Donate\".", "required": 0, "wrapper": { "width": "50", "class": "", "id": "" }, "default_value": "", "allow_in_bindings": 1 },
+                { "key": "field_navbar_cta_link", "label": "Link", "name": "cta_link", "type": "text", "instructions": "Button URL. Use # if none yet.", "required": 0, "wrapper": { "width": "50", "class": "", "id": "" }, "default_value": "", "allow_in_bindings": 1 }
+            ]
+        }
+    ],
+    "location": [
+        [
+            { "param": "options_page", "operator": "==", "value": "navbar-settings" }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "Site-wide navbar content, served to the Next.js frontend via GET /wp-json/yuva/v1/navbar.",
+    "show_in_rest": 1
+}
